@@ -11,8 +11,8 @@ var SECRET_KEYS = require("./secret_keys")
 
 var GITHUB_CLIENT_ID = SECRET_KEYS.GITHUB_CLIENT_ID
 var GITHUB_CLIENT_SECRET = SECRET_KEYS.GITHUB_CLIENT_SECRET
+var SESSION_SECRET = SECRET_KEYS.SESSION_SECRET
 
-console.log(GITHUB_CLIENT_ID)
 passport.serializeUser(function(user, done) {
   done(null, user)
 })
@@ -55,9 +55,45 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, "public")))
 
+// セキュリティ強化のため、セッション ID を作成されるときに利用される秘密鍵の文字列と、
+// セッションを必ずストアに保存しない設定、セッションが初期化されてなくてもストアに保存しないという設定 を付与
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  }),
+)
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use("/", indexRouter)
 app.use("/users", usersRouter)
 app.use("/photos", photosRouter)
+
+app.get(
+  "/auth/github",
+  passport.authenticate("github", { scope: ["user:email"] }),
+  function(req, res) {},
+)
+
+app.get(
+  "/auth/github/callback",
+  passport.authenticate("github", { failureRedirect: "/login" }),
+  function(req, res) {
+    res.redirect("/")
+  },
+)
+
+app.get("/login", function(req, res) {
+  res.render("login")
+})
+
+app.get("/logout", function(req, res) {
+  req.logout()
+  res.redirect("/")
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

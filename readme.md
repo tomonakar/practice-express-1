@@ -39,3 +39,5 @@ npm install
 4. IO イベントのコールバック関数の実行
 5. process.nextTick 関数に登録されているコールバック関数の実行
 
+### セッション用の秘密鍵　作成コマンド
+`node -e "console.log(require('crypto').randomBytes(8).toString('hex'));"`
