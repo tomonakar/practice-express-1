@@ -7,6 +7,7 @@ import helmet from "helmet"
 
 import indexRouter from "./routes/index"
 import usersRouter from "./routes/users"
+import photosRouter from "./routes/photos"
 
 const dirname = path.dirname(new URL(import.meta.url).pathname)
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(dirname, "public")))
 
 app.use("/", indexRouter)
 app.use("/users", usersRouter)
+app.use("/photos", photosRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
