@@ -41,3 +41,9 @@ npm install
 
 ### セッション用の秘密鍵　作成コマンド
 `node -e "console.log(require('crypto').randomBytes(8).toString('hex'));"`
+
+# 3. feature/mocha
+## 概要
+- mochaによるテストを確認
+- 使い勝手はjestと対して変わらない
+- 特に追記は無い
