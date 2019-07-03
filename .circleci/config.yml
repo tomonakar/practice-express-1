@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: circleci/node:10.16.0
 
-    working_directory: ~/repo/damage-calc-4004
+    working_directory: ~/damage-calc-4004
 
     steps:
       - checkout
