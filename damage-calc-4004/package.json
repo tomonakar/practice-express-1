@@ -1,0 +1,12 @@
+{
+  "name": "damage-calc",
+  "version": "1.0.0",
+  "description": "caliculator of damage",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "^6.1.4"
+  }
+}
