@@ -4,7 +4,7 @@ jobs:
     docker:
       - image: circleci/node:10.16.0
 
-    working_directory: ~/repo/damage-calc-4004
+    working_directory: ~/repo
 
     steps:
       - checkout
@@ -18,16 +18,16 @@ jobs:
 
       - save_cache:
           paths:
-            - node_modules
+            - damage-calc-4004/node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: mkdir junit
       - run:
-          command: node_modules/.bin/mocha test --reporter mocha-junit-reporter
+          command: damage-calc-4004/node_modules/.bin/mocha test --reporter mocha-junit-reporter
           environment:
-            MOCHA_FILE: ./junit/test-results.xml
+            MOCHA_FILE: ./damage-calc-4004/junit/test-results.xml
           when: always
       - store_test_results:
-          path: ./junit
+          path: ./damage-calc-4004/junit
       - store_artifacts:
-          path: ./junit
+          path: ./damage-calc-4004/junit
