@@ -7,7 +7,8 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
-    "mocha": "^6.1.4"
+    "mocha": "^6.1.4",
+    "mocha-junit-reporter": "^1.23.0"
   },
   "scripts": {
     "test": "node_modules/mocha/bin/mocha"
