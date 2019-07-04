@@ -1,6 +1,7 @@
 "use strict"
 const pug = require("pug")
 const util = require("./handler-util")
+const Post = require("./post")
 const contents = []
 
 function handle(req, res) {
@@ -24,7 +25,13 @@ function handle(req, res) {
           console.info("投稿されました: " + content)
           contents.push(content)
           console.info("投稿された全内容: " + contents)
-          handleRedirectPosts(req, res)
+          Post.create({
+            content: content,
+            trackingCookie: null,
+            postedBy: req.user,
+          }).then(() => {
+            handleRedirectPosts(req, res)
+          })
         })
       break
     default:
