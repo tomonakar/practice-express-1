@@ -84,3 +84,41 @@ create database secret_board;
 - webサービス起動
 `node index.js`
 
+# 10. SQL
+
+```
+# DB作成
+CREATE DATABASE diary_1;
+
+# DB接続
+\c diary_1
+
+# テーブル作成
+- 主キー制約（重複・空はNG）
+CREATE TABLE pages (write_date DATE PRIMARY KEY, body TEXT);
+
+
+# テーブル一覧表示
+\dt
+
+＃挿入
+INSERT INTO pages (write_date, body) VALUES ('2019-04-22', '最初の日記');
+
+# 更新
+UPDATE テーブル名 SET 列の名前=新しい値 WHERE 条件;
+
+
+＃データ取得
+SELECT body FROM pages;
+
+# 削除
+DELETE FROM pages WHERE write_date='2019-04-29';
+
+# WHERE句：絞り込み
+SELECT * FROM pages WHERE body LIKE '%寝た%';
+
+# DROP：テーブル削除
+DROP TABLE テーブル名;
+
+
+```
