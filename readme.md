@@ -47,3 +47,40 @@ npm install
 - mochaによるテストを確認
 - 使い勝手はjestと対して変わらない
 - 特に追記は無い
+
+# 4. CircleCI
+# 5. webpack
+# 6. Jqery
+# 7. AJAX
+# 8. WebSocket
+# 9. PostgreSQL 再入門
+## memo
+
+- postgreSQLコンテナ導入
+`docker container exec -it expres1-postgres bash`
+
+- コンテナにログイン
+`docker container exec -it expres-postgres bash`
+
+- コンテナからDBにログイン
+`psql -U postgres`
+
+- ローカルからpsqlでコンテナ上のDBにログイン
+`psql -d secret_board -U postgres -h 0.0.0.0`
+
+- DB内容を表示
+
+```
+\c secret_board
+select * from "Post";
+```
+
+- DB初期化
+```
+drop database secret_board;
+create database secret_board;
+```
+
+- webサービス起動
+`node index.js`
+
