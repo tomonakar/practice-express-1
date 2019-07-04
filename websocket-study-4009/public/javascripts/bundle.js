@@ -123,9 +123,16 @@ var loadavg = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#loadavg"); // webs
 
 var socket = socket_io_client__WEBPACK_IMPORTED_MODULE_1___default()("http://localhost:8000"); // websocket接続上で、 server-status イベントが発火したら
 // view を受け取ったデータで更新する
+// AJAXの時はクライアントサイドでポーリング間隔を指定してたが、websocketではもちろん不要
 
 socket.on("server-status", function (data) {
   loadavg.text(data.loadavg.toString() + "です！！");
+});
+socket.on("connect", function () {
+  console.log("接続しました");
+});
+socket.on("disconnect", function () {
+  console.log("切断しました");
 });
 
 /***/ }),
