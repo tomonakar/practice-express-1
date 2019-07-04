@@ -2,7 +2,6 @@
 const pug = require("pug")
 const util = require("./handler-util")
 const Post = require("./post")
-const contents = []
 
 function handle(req, res) {
   switch (req.method) {
@@ -10,7 +9,13 @@ function handle(req, res) {
       res.writeHead(200, {
         "Content-Type": "text/html; charset=utf-8",
       })
-      res.end(pug.renderFile("./views/posts.pug", { contents: contents }))
+      Post.findAll().then(posts => {
+        res.end(
+          pug.renderFile("./views/posts.pug", {
+            posts: posts,
+          }),
+        )
+      })
       break
     case "POST":
       let body = []
@@ -23,8 +28,6 @@ function handle(req, res) {
           const decoded = decodeURIComponent(body)
           const content = decoded.split("content=")[1]
           console.info("投稿されました: " + content)
-          contents.push(content)
-          console.info("投稿された全内容: " + contents)
           Post.create({
             content: content,
             trackingCookie: null,
