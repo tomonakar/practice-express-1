@@ -257,3 +257,83 @@ SELECT * FROM diaries;
 
 ### テーブルに列を追加する
 `ALTER TABLE テーブル名 ADD 追加する列の名前 データ型;`
+
+# 12 テーブル結合
+## 下準備
+```
+# db作成
+docker exec -it expres1-postgres bash
+psql -U postgres
+CREATE DATABASE TEMPLATE template0 diary3;
+
+# データ投入
+$ curl -o- https://progedu.github.io/rdb-study/dump_diary3.sql | psql diary3 -U postgres -h 0.0.0.0;
+```
+
+### 内部結合
+- 結合に使う列の値がどちらのテーブルにもそろって存在したときのみ、結果にその行を含める
+
+
+
+```
+SELECT
+    name,
+    body
+FROM
+    diaries
+    JOIN
+        users
+    ON  diaries.userid = users.userid
+WHERE
+    gender = '男';
+```
+
+- INNER JOIN と書ける
+
+```
+SELECT
+    id,
+    body,
+    comment
+FROM
+    diaries
+    INNER JOIN
+        comments
+    ON  diaries.id = comments.diary_id;
+```
+
+### 外部結合
+- 結合時に、指定したテーブル行を全て残しつつ結合ができる
+  - 左外部結合 (LEFT JOIN)
+  - 右外部結合 (RIGHT JOIN)
+  - 完全外部結合 (FULL JOIN)
+
+
+```
+SELECT
+    id,
+    body,
+    comment
+FROM
+    diaries
+    LEFT JOIN
+        comments
+    ON  diaries.id = comments.diary_id;
+```
+
+### ORDER BYによる並び替え
+
+```
+SELECT
+    id,
+    body,
+    comment
+FROM
+    diaries
+    LEFT JOIN
+        comments
+    ON  diaries.id = comments.diary_id
+ORDER BY
+    id;
+```
+
