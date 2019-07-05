@@ -167,3 +167,93 @@ DROP TABLE テーブル名;
 
 以上が、データ中心アプローティによるデータモデリングの流れとなる。
 
+## 適切にデータモデル設計がされていないテーブル
+
+```
+ id | write_date |       body       | user_name  | user_gender
+----+------------+------------------+------------+-------------
+  1 | 2019-02-25 | よく寝た         | 山田寝太郎 | 男
+  2 | 2019-02-26 | 昼寝した         | 山田寝太郎 | 男
+  3 | 2019-02-26 | 今日は晴れでした | 鈴木ひより | 女
+  4 | 2019-02-26 | 成長を感じる     | 石垣高雄   | 男
+  5 | 2019-02-27 | 今日も成長した   | 石垣高雄   | 男
+  6 | 2019-02-27 | 雨が降りました   | 鈴木ひより | 女
+  7 | 2019-02-28 | 寝すぎた         | 山田寝太郎 | 男
+  8 | 2019-02-28 | くもりでした     | 鈴木ひより | 女
+  9 | 2019-02-28 | 飛躍の一日だった | 石垣高雄   | 男
+ 10 | 2019-02-28 | 2月は寝てた      | 山田寝太郎 | 男
+(10 rows)
+```
+
+- データの実体が散らばり良くない設計（非正規形）となっている
+  - 日記帳とユーザ二つのエンティティが混ざり合ったテーブルとなっている
+  - 例えば、ユーザ名を変えた場合、複数行に変更が入り、管理が煩雑となる（データ数が増えると非常に辛くなる）
+
+### データの抽出
+
+```
+SELECT write_date, body FROM pages WHERE user_name='山田寝太郎';
+
+ write_date |    body
+------------+-------------
+ 2019-02-25 | よく寝た
+ 2019-02-26 | 昼寝した
+ 2019-02-28 | 寝すぎた
+ 2019-02-28 | 2月は寝てた
+(4 rows)
+
+SELECT user_name, user_gender from pages WHERE write_date='2019-02-27';
+
+ user_name | user_gender
+-----------+------------
+ 石垣高雄   | 男
+ 鈴木ひより | 女
+(2 rows)
+
+```
+
+## 上記の非正規形のテーブルを正規化する
+### 人テーブルを作る
+
+`CREATE TABLE users (userid SERIAL PRIMARY KEY, name VARCHAR(16), gender CHAR(1));`
+
+- データを投入する
+
+```
+INSERT INTO users (name, gender) VALUES ('山田寝太郎', '男');
+INSERT INTO users (name, gender) VALUES ('鈴木ひより', '女');
+INSERT INTO users (name, gender) VALUES ('石垣高雄', '男');
+```
+
+### 日記テーブルを作る
+
+- ユーザテーブルのデータと紐づけるために、外部キー `userid` を定義する
+
+`CREATE TABLE diaries (id SERIAL PRIMARY KEY, write_date DATE, body TEXT, userid INTEGER);`
+
+- データを投入する
+
+`INSERT INTO diaries (write_date, body, userid) VALUES ('2019-02-25', 'よく寝た', 1);`
+
+
+### 作成したそれぞれのテーブルを確認する
+
+```
+SELECT * FROM users;
+SELECT * FROM diaries;
+
+ userid |    name    | gender
+--------+------------+--------
+      1 | 山田寝太郎 | 男
+      2 | 鈴木ひより | 女
+      3 | 石垣高雄   | 男
+(3 rows)
+
+ id | write_date |       body       | userid
+----+------------+------------------+--------
+  1 | 2019-02-25 | よく寝た         |      1
+(1 row)
+```
+
+### テーブルに列を追加する
+`ALTER TABLE テーブル名 ADD 追加する列の名前 データ型;`
