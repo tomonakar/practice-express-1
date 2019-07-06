@@ -304,9 +304,9 @@ FROM
 
 ### 外部結合
 - 結合時に、指定したテーブル行を全て残しつつ結合ができる
-  - 左外部結合 (LEFT JOIN)
-  - 右外部結合 (RIGHT JOIN)
-  - 完全外部結合 (FULL JOIN)
+  - 左外部結合 (LEFT JOIN) ベン図の左側を含む
+  - 右外部結合 (RIGHT JOIN) ベン図の右側を含む
+  - 完全外部結合 (FULL JOIN) ベン図の論理積以外を含む
 
 
 ```
@@ -336,4 +336,62 @@ FROM
 ORDER BY
     id;
 ```
+
+# 13. インデックス
+
+### シーケンシャルスキャン
+
+- EXPLAIN で　インデックスが無いテーブルのSQL実行速度を測定する
+
+`EXPLAIN ANALYZE SELECT * FROM scores WHERE score = 100;`
+
+```
+ranking=# explain analyze select * from scores where score = 100;
+                                                       QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------
+ Gather  (cost=1000.00..12593.73 rows=154 width=24) (actual time=7.088..56.780 rows=617 loops=1)
+   Workers Planned: 2
+   Workers Launched: 2
+   ->  Parallel Seq Scan on scores  (cost=0.00..11578.33 rows=64 width=24) (actual time=0.190..40.826 rows=206 loops=3)
+         Filter: (score = 100)
+         Rows Removed by Filter: 333128
+ Planning Time: 1.170 ms
+ Execution Time: 62.150 ms
+(8 rows)
+```
+
+- 62.150msは時間がかかり過ぎているのでインデックスを使って短縮させる
+- インデックスがない場合、RDBはシーケンシャルに条件を全て探索するのでデータ量に比例して実行時間が伸びていく
+- EXPLAIN の結果に Seq Scanと表示されている
+
+
+### インデックスを付与
+
+- `scores` テーブルの `score` 列にインデックスをはる
+
+`CREATE INDEX ON scores (score);`
+
+- EXPLAIN ANALYZE で計測
+
+```
+ranking=# EXPLAIN ANALYZE SELECT * FROM scores WHERE score = 100;
+                                                           QUERY PLAN
+---------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using scores_score_idx on scores  (cost=0.42..531.55 rows=154 width=24) (actual time=0.195..17.556 rows=617 loops=1)
+   Index Cond: (score = 100)
+ Planning Time: 0.741 ms
+ Execution Time: 23.760 ms
+(4 rows)
+
+(END)
+```
+
+- 3倍くらい早くなった
+- インデックスを付与すると、探索に必要な情報がインデックスにまとめられ、 実際のテーブル行全てを探索する必要はなくなるので実行速度は向上する
+
+
+
+
+
+
 
