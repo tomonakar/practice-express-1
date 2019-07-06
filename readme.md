@@ -337,6 +337,7 @@ ORDER BY
     id;
 ```
 
+
 # 13. インデックス
 
 ### シーケンシャルスキャン
@@ -391,7 +392,167 @@ ranking=# EXPLAIN ANALYZE SELECT * FROM scores WHERE score = 100;
 
 
 
+# 14. 集計とソート
+## 集計関数
 
+- `AVG` と `COUNT` を利用する
+
+`SELECT AVG(score), COUNT(score) FROM scores;`
+
+```
+         avg         |  count
+---------------------+---------
+ 154285.264300000000 | 1000000
+(1 row)
+```
+
+- `MIN` `MAX` `SUM` を利用する
+
+```
+SELECT
+    MIN(stage),
+    MAX(stage),
+    SUM(score)
+FROM
+    scores
+    INNER JOIN
+        users
+    ON  scores.user_id = users.user_id
+WHERE
+    name = 'もも';
+```
+
+すると、`もも` さんの最小・最大・合計が取得できる
+
+```
+ min | max |    sum
+-----+-----+-----------
+   3 |  14 | 694724700
+(1 row)
+```
+
+## 複数の行をグループにまとめる
+
+- 上の結果に対して、`名前` 列を追加して表示したい
+
+```
+ SELECT
+    name,
+    MAX(stage),
+    AVG(score),
+    COUNT(score)
+FROM
+    scores
+    INNER JOIN
+        users
+    ON  scores.user_id = users.user_id;
+```
+
+こうすると、以下のようにエラーとなる
+
+```
+ERROR:  column "users.name" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 2:
+```
+
+これは、 `集計関数` は、 `SELECT文で与えられた行全てを対象にする` ため、複数行ある場合に問題が発生する
+
+
+- `GROUP BY` を利用すると、指定した属性を一つの `行` （グループ）として扱えるので解決する
+
+```
+SELECT
+    name,
+    MAX(stage),
+    AVG(score),
+    COUNT(score)
+FROM
+    scores
+    INNER JOIN
+        users
+    ON  scores.user_id = users.user_id
+GROUP BY
+    name;
+```
+
+結果はこうなる
+
+```
+    name    | max |          avg           | count 
+------------+-----+------------------------+-------
+ 777        |  17 |     82903.613610798650 |  7112
+ B.O        |  20 |    148742.859775198084 |  5427
+ GiantM     |  21 |    167637.019450278513 | 10951
+ Gouki      |  14 |     47244.801154297051 | 11089
+:
+```
+
+## HAVING句の利用
+
+- 上の結果に対して、累計記録数が 10000 回未満のユーザーだけ取得したい場合に、 `WHERE` 句ではエラーになる
+
+```
+SELECT
+    name,
+    MAX(stage),
+    AVG(score),
+    COUNT(score)
+FROM
+    scores
+    INNER JOIN
+        users
+    ON  scores.user_id = users.user_id
+GROUP BY
+    name
+WHERE
+    COUNT(score) < 10000;
+
+ERROR:  syntax error at or near "WHERE"
+LINE 13: WHERE
+```
+
+- `WHERE` は、`行` についての条件を書くためのものだからである
+
+- `HAVIGNG` を使えば、`GROUP BY`で作ったグループに条件を指定できる
+
+```
+SELECT
+    name,
+    MAX(stage),
+    AVG(score),
+    COUNT(score)
+FROM
+    scores
+    INNER JOIN
+        users
+    ON  scores.user_id = users.user_id
+GROUP BY
+    name
+HAVING
+    COUNT(score) < 10000;
+```
+
+```
+ranking2-#     COUNT(score) < 10000;
+    name    | max |          avg          | count
+------------+-----+-----------------------+-------
+ あき       |  19 |   121128.127244740893 |  9745
+ ねむ       |  27 |   325767.615549433731 |  9801
+ ひろ       |  24 |   243305.197891908649 |  9677
+ やす       |  23 |   223239.505956552207 |  5708
+ イカ       |   9 |    14044.002142092110 |  5602
+ ```
+
+ ## まとめ
+ - SQL は、集合で考えることによって一層活用することができる
+- RDBMS には集計関数として色々な関数が用意されている
+- 合計を求める SUM
+- 平均を求める AVG
+- 最大値を求める MAX
+- 最小値を求める MIN
+- 要素数を求める COUNT
+- GROUP BY 句によって、SELECT 文の結果をグループに分割することができる
+- グループに対する条件を書くには WHERE 句ではなく HAVING 句を使う
 
 
 
