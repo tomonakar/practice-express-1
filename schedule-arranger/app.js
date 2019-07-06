@@ -4,12 +4,42 @@ var path = require("path")
 var cookieParser = require("cookie-parser")
 var logger = require("morgan")
 var helmet = require("helmet")
+var session = require("express-session")
+var passport = require("passport")
+
+var SECRET_KEYS = require("./secret-keys.js")
+var GitHubStrategy = require("passport-github2").Strategy
+var GITHUB_CLIENT_ID = SECRET_KEYS.GITHUB_CLIENT_ID
+var GITHUB_CLIENT_SECRET = SECRET_KEYS.GITHUB_CLIENT_SECRET
+
+passport.serializeUser(function(user, done) {
+  done(null, user)
+})
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj)
+})
+
+passport.use(
+  new GitHubStrategy(
+    {
+      clientID: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
+      callbackURL: "http://localhost:8000/auth/github/callback",
+    },
+    function(accessToken, refreshToken, profile, done) {
+      process.nextTick(function() {
+        return done(null, profile)
+      })
+    },
+  ),
+)
 
 var indexRouter = require("./routes/index")
 var usersRouter = require("./routes/users")
 
 var app = express()
-app.user(helmet())
+app.use(helmet())
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"))
@@ -20,6 +50,16 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, "public")))
+
+app.use(
+  session({
+    secret: SECRET_KEYS.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  }),
+)
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use("/", indexRouter)
 app.use("/users", usersRouter)
