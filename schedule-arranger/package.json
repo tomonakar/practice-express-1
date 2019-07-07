@@ -1,0 +1,40 @@
+{
+  "name": "schedule-arranger",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "test": "node_modules/mocha/bin/mocha --timeout 10000"
+  },
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "cookie-parser": "~1.4.4",
+    "csurf": "^1.10.0",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-session": "^1.16.2",
+    "helmet": "^3.18.0",
+    "http-errors": "~1.6.3",
+    "jquery": "^3.4.1",
+    "mocha": "^6.1.4",
+    "moment-timezone": "^0.5.26",
+    "morgan": "~1.9.1",
+    "passport": "^0.4.0",
+    "passport-github2": "^0.1.11",
+    "passport-stub": "^1.1.1",
+    "pg": "^7.11.0",
+    "pg-hstore": "^2.3.3",
+    "popper.js": "^1.15.0",
+    "pug": "2.0.0-beta11",
+    "sequelize": "^5.9.4",
+    "supertest": "^4.0.2",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.0",
+    "@babel/preset-env": "^7.5.0",
+    "babel-loader": "^8.0.6",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5"
+  }
+}
