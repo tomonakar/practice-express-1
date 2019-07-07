@@ -13,6 +13,7 @@
     "express-session": "^1.16.2",
     "helmet": "^3.18.0",
     "http-errors": "~1.6.3",
+    "jquery": "^3.4.1",
     "mocha": "^6.1.4",
     "morgan": "~1.9.1",
     "passport": "^0.4.0",
@@ -24,5 +25,12 @@
     "sequelize": "^5.9.4",
     "supertest": "^4.0.2",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.5.0",
+    "@babel/preset-env": "^7.5.0",
+    "babel-loader": "^8.0.6",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5"
   }
 }
