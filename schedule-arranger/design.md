@@ -84,3 +84,40 @@ entity コメント{
 │   └── user.js                ユーザーの定義と永続化
 ```
 
+# 予定（schedule）のデータモデリング
+
+| schheduleの属性 | 形式   | 内容                                |
+| --------------- | ------ | ----------------------------------- |
+| scheduleId      | UUID   | 予定,ID,PrimaryKey,連番で付与される |
+| scheduleName    | 文字列 | 予定名                              |
+| memo            | 文字列 | めも                                |
+| createdBy       | 数値   | 作成者、ユーザID                    |
+| updatedAt       | 日付   | 更新日時                            |
+
+- UUID : Universally Unique Identifier
+  - 全世界で同じ値を持つことがない一意な識別子 uuidp
+
+# 候補日（candidate）のデータモデリング
+| condidateの属性 | 形式   | 内容                   |
+| --------------- | ------ | ---------------------- |
+| candidate       | 数値   | 候補日程ID,主キー,連番 |
+| candidateName   | 文字列 | 候補日名               |
+| schheduleId     | UUID   | 関連する予定ID         |
+
+
+# 出欠（availability）のデータモデリング
+
+| 属性名       | 形式 | 内容                    |
+| ------------ | ---- | ----------------------- |
+| candidateId  | 数値 | 候補日程uID,主キー      |
+| userId       | 数値 | GitHubのユーザID,主キー |
+| availability | 数値 | 出欠の種類              |
+| scheduleId   | UUID | 関連する予定ID          |
+
+# コメントのデータモデリング
+
+| 属性名     | 形式   | 内容                    |
+| ---------- | ------ | ----------------------- |
+| scheduleId | UUID   | 関連する予定ID, 主キー  |
+| userId     | 数値   | GitHubのユーザID,主キー |
+| comment    | 文字列 | コメント                |
